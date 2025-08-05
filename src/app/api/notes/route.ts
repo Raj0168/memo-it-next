@@ -1,12 +1,10 @@
-// api/notes/route.ts
-import { connectToDB } from "@/lib/mongodb";
+import { connectToDB } from "@/lib/db";
 import Note from "@/models/Note";
 import User from "@/models/User";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import mongoose from "mongoose";
 
-// POST /api/notes — Create a new note
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
@@ -33,7 +31,6 @@ export async function POST(req: Request) {
   return new Response(JSON.stringify(note), { status: 201 });
 }
 
-// GET /api/notes?page=1&limit=10 — Get paginated notes
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)

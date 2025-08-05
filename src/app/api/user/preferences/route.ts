@@ -1,7 +1,6 @@
-// api/user/preferences/route.ts
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { connectToDB } from "@/lib/mongodb";
+import { connectToDB } from "@/lib/db";
 import User from "@/models/User";
 
 export async function GET() {

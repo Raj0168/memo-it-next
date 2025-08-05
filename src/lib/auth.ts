@@ -1,8 +1,7 @@
-// lib/auth.ts
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
 import bcrypt from "bcrypt";
-import { connectToDB } from "./mongodb";
+import { connectToDB } from "./db";
 import User from "@/models/User";
 
 export const authOptions: NextAuthOptions = {

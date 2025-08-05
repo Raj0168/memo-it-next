@@ -1,5 +1,4 @@
-// api/register/route.ts
-import { connectToDB } from "@/lib/mongodb";
+import { connectToDB } from "@/lib/db";
 import User from "@/models/User";
 import bcrypt from "bcrypt";
 
