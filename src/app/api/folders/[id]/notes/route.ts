@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Note from "@/models/Note";
 import User from "@/models/User";
+import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -10,7 +11,7 @@ export async function GET(
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json("Unauthorized", { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -28,5 +29,5 @@ export async function GET(
     .skip((page - 1) * limit)
     .limit(limit);
 
-  return new Response(JSON.stringify(notes), { status: 200 });
+  return NextResponse.json(notes, { status: 200 });
 }

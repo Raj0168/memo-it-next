@@ -3,11 +3,12 @@ import Note from "@/models/Note";
 import User from "@/models/User";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json("Unauthorized", { status: 401 });
 
   await connectToDB();
   const user = await User.findOne({ email: session.user.email });
@@ -19,5 +20,5 @@ export async function GET() {
     timer: { $lte: now },
   });
 
-  return new Response(JSON.stringify(dueNotes), { status: 200 });
+  return NextResponse.json(dueNotes, { status: 200 });
 }
