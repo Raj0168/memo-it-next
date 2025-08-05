@@ -1,5 +1,5 @@
-// app/api/notes/[id]/route.ts
-import { connectToDB } from "@/lib/mongodb";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { connectToDB } from "@/lib/db";
 import Note from "@/models/Note";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     return NextResponse.json(note, { status: 200 });
-  } catch (err) {
+  } catch (_error) {
     return NextResponse.json({ error: "Error fetching note" }, { status: 500 });
   }
 }
@@ -29,7 +29,7 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session)
+    if (!session || !session.user || !session.user.email)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectToDB();
@@ -37,7 +37,7 @@ export async function PUT(
     const { heading, content, timer, folder } = await req.json();
 
     const updated = await Note.findOneAndUpdate(
-      { _id: params.id, user: session.user.id },
+      { _id: params.id, user: session.user.email },
       { heading, content, timer, folder },
       { new: true }
     );
@@ -50,7 +50,7 @@ export async function PUT(
     }
 
     return NextResponse.json(updated, { status: 200 });
-  } catch (err) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Failed to update note" },
       { status: 500 }
@@ -64,14 +64,14 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session)
+    if (!session || !session.user || !session.user.email)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectToDB();
 
     const deleted = await Note.findOneAndDelete({
       _id: params.id,
-      user: session.user.id,
+      user: session.user.email,
     });
 
     if (!deleted) {
@@ -82,7 +82,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: "Note deleted" }, { status: 200 });
-  } catch (err) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Failed to delete note" },
       { status: 500 }
