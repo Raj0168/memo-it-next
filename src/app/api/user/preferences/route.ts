@@ -2,11 +2,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { connectToDB } from "@/lib/db";
 import User from "@/models/User";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json("Unauthorized", { status: 401 });
   }
 
   await connectToDB();
@@ -15,16 +16,16 @@ export async function GET() {
     "name notifications"
   );
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return NextResponse.json("User not found", { status: 404 });
   }
 
-  return new Response(JSON.stringify(user), { status: 200 });
+  return NextResponse.json(user, { status: 200 });
 }
 
 export async function PATCH(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json("Unauthorized", { status: 401 });
   }
 
   const { name, notifications } = await request.json();
@@ -37,5 +38,5 @@ export async function PATCH(request: Request) {
     { new: true }
   ).select("name notifications");
 
-  return new Response(JSON.stringify(updatedUser), { status: 200 });
+  return NextResponse.json(updatedUser, { status: 200 });
 }
